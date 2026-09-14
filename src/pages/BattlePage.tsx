@@ -622,15 +622,15 @@ export const BattlePage: React.FC<BattlePageProps> = ({
           >
             补给 ({player.suppliesLeft})
           </Button>
-          <Button
-            variant="weak"
-            size="lg"
-            disabled={isBusy || player.currentHP <= 0}
-            icon={<LogOut className="w-5 h-5" />}
-            onClick={handleFlee}
-          >
-            逃跑
-          </Button>
+          // <Button
+          //   variant="weak"
+          //   size="lg"
+          //   disabled={isBusy || player.currentHP <= 0}
+          //   icon={<LogOut className="w-5 h-5" />}
+          //   onClick={handleFlee}
+          // >
+          //   逃跑
+          // </Button>
         </div>
       </div>
 
