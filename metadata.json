@@ -1,0 +1,6 @@
+{
+  "name": "阳光竞技场",
+  "description": "卡通扁平风回合制对战游戏，包含数值设定、BOSS抽取、打击感战斗动效与半血揭秘系统，完美适配移动端与桌面端。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
