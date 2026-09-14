@@ -60,6 +60,12 @@ export const BattlePage: React.FC<BattlePageProps> = ({
   const [hasFirstRevealed, setHasFirstRevealed] = useState(false);
   const [lastRevealedPlayerPercent, setLastRevealedPlayerPercent] = useState(100);
   const [lastRevealedBossPercent, setLastRevealedBossPercent] = useState(100);
+
+  const hasFirstRevealedRef = useRef(false);
+  const revealsCountRef = useRef(0);
+  const lastRevealedPlayerPercentRef = useRef(100);
+  const lastRevealedBossPercentRef = useRef(100);
+
   const [revealPanel, setRevealPanel] = useState<RevealState>({
     isOpen: false,
     count: 1,
@@ -96,7 +102,7 @@ export const BattlePage: React.FC<BattlePageProps> = ({
     setTimeout(() => setScreenShake('none'), 300);
   };
 
-  // Reveal check logic
+  // Reveal check logic: Only called when checking if player should be presented with choices
   const checkRevealNeeded = useCallback(
     (nextPlayerHP: number, nextBossHP: number): boolean => {
       const pPercent = Math.round((nextPlayerHP / playerRef.current.maxHP) * 100);
@@ -104,8 +110,13 @@ export const BattlePage: React.FC<BattlePageProps> = ({
       const thresholdPercent = Math.round(config.halfHpThreshold * 100);
 
       // Condition 1: First time either party <= halfHpThreshold
-      if (!hasFirstRevealed) {
+      if (!hasFirstRevealedRef.current) {
         if (pPercent <= thresholdPercent || bPercent <= thresholdPercent) {
+          hasFirstRevealedRef.current = true;
+          revealsCountRef.current = 1;
+          lastRevealedPlayerPercentRef.current = pPercent;
+          lastRevealedBossPercentRef.current = bPercent;
+
           setHasFirstRevealed(true);
           setRevealsCount(1);
           setLastRevealedPlayerPercent(pPercent);
@@ -127,9 +138,16 @@ export const BattlePage: React.FC<BattlePageProps> = ({
       } else {
         // Condition 2: Subsequent rounds if either % dropped further and revealsCount < maxCount
         const maxTotalReveals = 1 + config.maxExtraReveals;
-        if (revealsCount < maxTotalReveals) {
-          if (pPercent < lastRevealedPlayerPercent || bPercent < lastRevealedBossPercent) {
-            const nextCount = revealsCount + 1;
+        if (revealsCountRef.current < maxTotalReveals) {
+          if (
+            pPercent < lastRevealedPlayerPercentRef.current ||
+            bPercent < lastRevealedBossPercentRef.current
+          ) {
+            const nextCount = revealsCountRef.current + 1;
+            revealsCountRef.current = nextCount;
+            lastRevealedPlayerPercentRef.current = pPercent;
+            lastRevealedBossPercentRef.current = bPercent;
+
             setRevealsCount(nextCount);
             setLastRevealedPlayerPercent(pPercent);
             setLastRevealedBossPercent(bPercent);
@@ -151,7 +169,7 @@ export const BattlePage: React.FC<BattlePageProps> = ({
       }
       return false;
     },
-    [hasFirstRevealed, revealsCount, lastRevealedPlayerPercent, lastRevealedBossPercent, config]
+    [config]
   );
 
   // Finish match handler
@@ -292,15 +310,11 @@ export const BattlePage: React.FC<BattlePageProps> = ({
             return;
           }
 
-          // Check reveal
-          const triggeredReveal = checkRevealNeeded(playerRef.current.currentHP, nextBossHP);
-          if (triggeredReveal) {
-            // Unlock action buttons for the reveal panel choices
-            setIsBusy(false);
-            return;
-          }
+          // Check if half-HP reveal was triggered by this hit (note down revealed state)
+          checkRevealNeeded(playerRef.current.currentHP, nextBossHP);
 
-          // If not ended and no reveal, BOSS counters!
+          // Crucial: It is now BOSS's turn to attack!
+          // The BOSS will ALWAYS choose to continue attacking without pausing for player input.
           setTimeout(() => {
             executeBossTurn();
           }, 350);
@@ -347,14 +361,10 @@ export const BattlePage: React.FC<BattlePageProps> = ({
       setPlayerIsHealed(false);
       setPlayerAction('idle');
 
-      // Check reveal or Boss counters
-      const triggeredReveal = checkRevealNeeded(nextHP, bossRef.current.currentHP);
-      if (triggeredReveal) {
-        setIsBusy(false);
-        return;
-      }
+      // Player used supply. Check if reveal thresholds changed:
+      checkRevealNeeded(nextHP, bossRef.current.currentHP);
 
-      // BOSS counter attack
+      // Crucial: It is now BOSS's turn to attack! BOSS always attacks next.
       setTimeout(() => {
         executeBossTurn();
       }, 350);
