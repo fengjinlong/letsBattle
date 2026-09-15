@@ -253,9 +253,7 @@ export const SetupPage: React.FC<SetupPageProps> = ({
               <h2 className="text-base sm:text-lg font-black text-[#4A3323] flex items-center gap-1.5">
                 <span>随身补给行囊</span>
               </h2>
-              <p className="text-[11px] sm:text-xs text-[#8A7A6D] font-bold">
-                默认均为 0，按需自选，使用次数不设限！
-              </p>
+             
             </div>
           </div>
 
