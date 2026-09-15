@@ -8,6 +8,7 @@ import { ShieldAlert, Swords, HeartPulse, LogOut } from 'lucide-react';
 interface RevealPanelProps {
   revealState: RevealState;
   suppliesLeft: number;
+  isBusy?: boolean;
   onAttack: () => void;
   onSupply: () => void;
   onFlee: () => void;
@@ -16,6 +17,7 @@ interface RevealPanelProps {
 export const RevealPanel: React.FC<RevealPanelProps> = ({
   revealState,
   suppliesLeft,
+  isBusy = false,
   onAttack,
   onSupply,
   onFlee,
@@ -73,13 +75,13 @@ export const RevealPanel: React.FC<RevealPanelProps> = ({
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-xl leading-none">{avatar}</span>
-            <span className="text-xl font-black text-[#4A3323] tracking-tight mt-0.5">
+            <span className="text-2xl leading-none">{avatar}</span>
+            <span className="text-2xl font-black text-[#4A3323] tracking-tight mt-0.5">
               {percent}%
             </span>
           </div>
         </div>
-        <span className="font-bold text-sm text-[#4A3323] mt-1">{label}</span>
+        <span className="font-extrabold text-sm sm:text-base text-[#4A3323] mt-1.5">{label}</span>
       </div>
     );
   };
@@ -110,24 +112,24 @@ export const RevealPanel: React.FC<RevealPanelProps> = ({
           >
             {/* Top Badge & Counter */}
             <div className="flex items-center justify-between mb-3">
-              <div className="inline-flex items-center gap-1.5 bg-[#FF8C42]/15 text-[#FF8C42] px-3 py-1 rounded-full text-xs font-bold">
+              <div className="inline-flex items-center gap-1.5 bg-[#FF8C42]/15 text-[#FF8C42] px-3.5 py-1.5 rounded-full text-sm font-black">
                 <ShieldAlert className="w-4 h-4" />
                 战况警报·半血揭示
               </div>
-              <div className="bg-[#EADBC8] text-[#4A3323] text-xs font-extrabold px-2.5 py-1 rounded-full">
+              <div className="bg-[#EADBC8] text-[#4A3323] text-sm font-black px-3 py-1.5 rounded-full">
                 提示 {count} / {maxCount}
               </div>
             </div>
 
-            <h3 className="text-xl sm:text-2xl font-black text-[#4A3323] tracking-tight">
+            <h3 className="text-2xl sm:text-3xl font-black text-[#4A3323] tracking-tight">
               敌我血量态势揭晓
             </h3>
-            <p className="text-xs sm:text-sm text-[#8A7A6D] mt-1 mb-5">
+            <p className="text-sm sm:text-base text-[#8A7A6D] mt-1.5 mb-5 font-semibold">
               双方已进入白热化战斗！请根据目前血量差距选择后续策略：
             </p>
 
             {/* Dual Gauges */}
-            <div className="flex items-center justify-around bg-[#F9F2E7] rounded-2xl p-4 border border-[#EEDCC4] mb-6">
+            <div className="flex items-center justify-around bg-[#F9F2E7] rounded-2xl p-4 border-2 border-[#EEDCC4] mb-6">
               <CircularGauge
                 percent={playerPercent}
                 color="#4FB6E8"
@@ -149,6 +151,7 @@ export const RevealPanel: React.FC<RevealPanelProps> = ({
                 variant="primary"
                 fullWidth
                 size="md"
+                disabled={isBusy}
                 icon={<Swords className="w-4 h-4" />}
                 onClick={onAttack}
               >
@@ -158,7 +161,7 @@ export const RevealPanel: React.FC<RevealPanelProps> = ({
                 variant="secondary"
                 fullWidth
                 size="md"
-                disabled={suppliesLeft <= 0}
+                disabled={isBusy || suppliesLeft <= 0}
                 icon={<HeartPulse className="w-4 h-4" />}
                 onClick={onSupply}
               >
@@ -168,6 +171,7 @@ export const RevealPanel: React.FC<RevealPanelProps> = ({
                 variant="weak"
                 fullWidth
                 size="md"
+                disabled={isBusy}
                 icon={<LogOut className="w-4 h-4" />}
                 onClick={onFlee}
               >

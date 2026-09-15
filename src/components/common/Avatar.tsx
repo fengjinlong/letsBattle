@@ -153,7 +153,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       <div className="w-16 sm:w-24 h-3 bg-[#4A3323]/15 rounded-full mt-2 blur-[1px]" />
 
       {/* Tag name */}
-      <div className="mt-1 font-bold text-xs sm:text-sm text-[#4A3323] bg-[#FFFBF2]/90 px-2.5 py-0.5 rounded-full border border-[#EEDCC4] shadow-sm">
+      <div className="mt-1.5 font-black text-sm sm:text-base text-[#4A3323] bg-[#FFFBF2] px-3.5 py-1 rounded-full border-2 border-[#EEDCC4] shadow-sm">
         {silhouette ? '未知魔物' : name}
       </div>
     </div>

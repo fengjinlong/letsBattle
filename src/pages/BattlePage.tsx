@@ -310,11 +310,9 @@ export const BattlePage: React.FC<BattlePageProps> = ({
             return;
           }
 
-          // Check if half-HP reveal was triggered by this hit (note down revealed state)
-          checkRevealNeeded(playerRef.current.currentHP, nextBossHP);
-
-          // Crucial: It is now BOSS's turn to attack!
-          // The BOSS will ALWAYS choose to continue attacking without pausing for player input.
+          // Note: If player's hit brings boss <= 50%, do NOT trigger reveal dialog here.
+          // In turn-based sequence, BOSS MUST counter-attack next without dialog interruption.
+          // The reveal dialog will be checked and presented to the player AFTER boss attacks!
           setTimeout(() => {
             executeBossTurn();
           }, 350);
@@ -361,10 +359,8 @@ export const BattlePage: React.FC<BattlePageProps> = ({
       setPlayerIsHealed(false);
       setPlayerAction('idle');
 
-      // Player used supply. Check if reveal thresholds changed:
-      checkRevealNeeded(nextHP, bossRef.current.currentHP);
-
       // Crucial: It is now BOSS's turn to attack! BOSS always attacks next.
+      // Reveal will be evaluated after BOSS finishes attacking.
       setTimeout(() => {
         executeBossTurn();
       }, 350);
@@ -400,10 +396,10 @@ export const BattlePage: React.FC<BattlePageProps> = ({
       {/* Top Floating Status / Header Bar */}
       <div className="w-full max-w-4xl mx-auto px-4 pt-3 sm:pt-4 flex items-center justify-between z-20">
         <div className="flex items-center gap-2">
-          <span className="font-cartoon text-xs sm:text-sm font-extrabold bg-[#FFFBF2] text-[#4A3323] px-3 py-1 rounded-full border border-[#EEDCC4] shadow-sm">
+          <span className="font-cartoon text-sm sm:text-base font-black bg-[#FFFBF2] text-[#4A3323] px-3.5 py-1.5 rounded-full border-2 border-[#EEDCC4] shadow-sm">
             回合 {rounds}
           </span>
-          <span className="font-cartoon text-xs text-[#8A7A6D] hidden sm:inline-block bg-[#FFFBF2]/70 px-2.5 py-1 rounded-full border border-[#EEDCC4]/60">
+          <span className="font-cartoon text-xs sm:text-sm text-[#8A7A6D] hidden sm:inline-block bg-[#FFFBF2]/85 px-3 py-1 rounded-full border border-[#EEDCC4]">
             补给剩余: {player.suppliesLeft}/{config.maxSupplies}
           </span>
         </div>
@@ -630,6 +626,7 @@ export const BattlePage: React.FC<BattlePageProps> = ({
       <RevealPanel
         revealState={revealPanel}
         suppliesLeft={player.suppliesLeft}
+        isBusy={isBusy}
         onAttack={handleAttack}
         onSupply={handleSupply}
         onFlee={handleFlee}

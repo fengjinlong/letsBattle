@@ -191,28 +191,28 @@ export const DraftPage: React.FC<DraftPageProps> = ({
                   <div className="absolute top-1.5 left-2 w-1/3 h-1/3 rounded-full bg-white/35" />
                 </div>
 
-                <div className={`px-3 py-0.5 rounded-full text-xs font-black ${tierStyle.badgeBg} ${tierStyle.badgeText} mb-1`}>
+                <div className={`px-3.5 py-1 rounded-full text-xs sm:text-sm font-black ${tierStyle.badgeBg} ${tierStyle.badgeText} mb-1.5`}>
                   {currentBoss.tierLabel}
                 </div>
 
-                <h3 className="text-2xl font-black text-[#4A3323] tracking-tight">
+                <h3 className="text-2xl sm:text-3xl font-black text-[#4A3323] tracking-tight">
                   {currentBoss.name}
                 </h3>
-                <p className="text-xs text-[#FF8C42] font-bold mt-0.5">{currentBoss.title}</p>
+                <p className="text-sm sm:text-base text-[#FF8C42] font-extrabold mt-0.5">{currentBoss.title}</p>
               </div>
 
               {/* Mystery Concealed Stats Panel */}
-              <div className="bg-[#F9F2E7] rounded-2xl p-3.5 border border-[#EEDCC4] mb-4">
-                <p className="text-xs text-[#8A7A6D] mb-2 leading-relaxed">
+              <div className="bg-[#F9F2E7] rounded-2xl p-4 border border-[#EEDCC4] mb-4">
+                <p className="text-sm text-[#8A7A6D] mb-2.5 leading-relaxed font-medium">
                   {currentBoss.desc}
                 </p>
-                <div className="flex items-center justify-center gap-3 text-xs font-extrabold text-[#4A3323] bg-[#EADBC8]/60 py-1.5 px-3 rounded-xl border border-[#DFC9AF]">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm font-extrabold text-[#4A3323] bg-[#EADBC8]/70 py-2 px-3.5 rounded-xl border border-[#DFC9AF]">
                   <span>🛡️ 生命值：<span className="text-[#8A7A6D]">??? (未知隐藏)</span></span>
                   <span>⚔️ 攻击力：<span className="text-[#8A7A6D]">??? (未知隐藏)</span></span>
                 </div>
               </div>
 
-              <div className="text-[11px] text-[#8A7A6D] font-semibold">
+              <div className="text-xs sm:text-sm text-[#8A7A6D] font-bold">
                 提示：魔物具体生命将在半血阶段提供侦察情报！
               </div>
             </motion.div>

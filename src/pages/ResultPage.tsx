@@ -142,44 +142,44 @@ export const ResultPage: React.FC<ResultPageProps> = ({ stats, onPlayAgain }) =>
         transition={{ delay: 0.2, duration: 0.4 }}
         className="w-full bg-[#FFFBF2] rounded-3xl border-4 border-[#EEDCC4] shadow-hard-card p-5 my-6"
       >
-        <h3 className="text-base font-bold text-[#4A3323] border-b border-[#EEDCC4] pb-2.5 mb-4 flex items-center gap-2">
-          <Award className="w-4 h-4 text-[#FF8C42]" />
+        <h3 className="text-lg font-black text-[#4A3323] border-b border-[#EEDCC4] pb-2.5 mb-4 flex items-center gap-2">
+          <Award className="w-5 h-5 text-[#FF8C42]" />
           <span>战斗数据结算清单</span>
         </h3>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-[#F9F2E7] p-3 rounded-2xl border border-[#EEDCC4] text-center">
-            <div className="text-xs text-[#8A7A6D] font-bold">对决对手</div>
-            <div className="text-base font-black text-[#4A3323] truncate mt-0.5">
+          <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border border-[#EEDCC4] text-center">
+            <div className="text-xs sm:text-sm text-[#8A7A6D] font-extrabold">对决对手</div>
+            <div className="text-lg font-black text-[#4A3323] truncate mt-0.5">
               {stats.bossName}
             </div>
           </div>
 
-          <div className="bg-[#F9F2E7] p-3 rounded-2xl border border-[#EEDCC4] text-center">
-            <div className="text-xs text-[#8A7A6D] font-bold">交锋回合数</div>
-            <div className="text-xl font-black text-[#FF8C42] mt-0.5">
-              {stats.rounds} <span className="text-xs font-bold text-[#8A7A6D]">回合</span>
+          <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border border-[#EEDCC4] text-center">
+            <div className="text-xs sm:text-sm text-[#8A7A6D] font-extrabold">交锋回合数</div>
+            <div className="text-2xl font-black text-[#FF8C42] mt-0.5">
+              {stats.rounds} <span className="text-xs sm:text-sm font-bold text-[#8A7A6D]">回合</span>
             </div>
           </div>
 
-          <div className="bg-[#F9F2E7] p-3 rounded-2xl border border-[#EEDCC4] text-center">
-            <div className="text-xs text-[#8A7A6D] font-bold">累计造成伤害</div>
-            <div className="text-xl font-black text-[#E8432E] mt-0.5">
+          <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border border-[#EEDCC4] text-center">
+            <div className="text-xs sm:text-sm text-[#8A7A6D] font-extrabold">累计造成伤害</div>
+            <div className="text-2xl font-black text-[#E8432E] mt-0.5">
               {stats.totalDamageDealt}
             </div>
           </div>
 
-          <div className="bg-[#F9F2E7] p-3 rounded-2xl border border-[#EEDCC4] text-center">
-            <div className="text-xs text-[#8A7A6D] font-bold">累计承受伤害</div>
-            <div className="text-xl font-black text-[#4FB6E8] mt-0.5">
+          <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border border-[#EEDCC4] text-center">
+            <div className="text-xs sm:text-sm text-[#8A7A6D] font-extrabold">累计承受伤害</div>
+            <div className="text-2xl font-black text-[#4FB6E8] mt-0.5">
               {stats.totalDamageTaken}
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between bg-[#F9F2E7] px-3.5 py-2.5 rounded-xl border border-[#EEDCC4] text-xs font-bold text-[#8A7A6D]">
+        <div className="flex items-center justify-between bg-[#F9F2E7] px-4 py-3 rounded-xl border border-[#EEDCC4] text-sm font-bold text-[#8A7A6D]">
           <span>消耗补给次数</span>
-          <span className="font-extrabold text-[#4A3323]">
+          <span className="font-black text-[#4A3323] text-base">
             {stats.suppliesUsed} 次
           </span>
         </div>

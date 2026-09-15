@@ -36,40 +36,40 @@ export const SetupPage: React.FC<SetupPageProps> = ({
 
   return (
     <div className="w-full max-w-lg mx-auto px-4 py-6 sm:py-10 flex flex-col items-center">
-      {/* Sound Mute Toggle in top corner */}
-      <div className="w-full flex justify-end mb-2">
-        <button
-          onClick={toggleMute}
-          className="p-2.5 rounded-full bg-[#FFFBF2] text-[#4A3323] border-2 border-[#EEDCC4] shadow-[0_2px_0_#E0CCA9] active:translate-y-[1px] hover:bg-[#FDF6E7] cursor-pointer"
-          title={isMuted ? '开启音效' : '静音'}
-        >
-          {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-        </button>
-      </div>
-
-      {/* Header / Logo */}
-      <motion.div
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, type: 'spring' }}
-        className="text-center mb-6"
-      >
-        <div className="inline-flex items-center gap-2 bg-[#FFFBF2] px-4 py-1 rounded-full border-2 border-[#EEDCC4] shadow-sm text-xs font-bold text-[#FF8C42] mb-2">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>卡通扁平风 · 回合对决</span>
+        {/* Sound Mute Toggle in top corner */}
+        <div className="w-full flex justify-end mb-2">
+          <button
+            onClick={toggleMute}
+            className="p-2.5 rounded-full bg-[#FFFBF2] text-[#4A3323] border-2 border-[#EEDCC4] shadow-[0_2px_0_#E0CCA9] active:translate-y-[1px] hover:bg-[#FDF6E7] cursor-pointer"
+            title={isMuted ? '开启音效' : '静音'}
+          >
+            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          </button>
         </div>
-        <h1
-          className="text-4xl sm:text-5xl font-black tracking-tight text-[#4A3323]"
-          style={{
-            textShadow: '0 4px 0 #FFF, 0 -2px 0 #FFF, 2px 0 0 #FFF, -2px 0 0 #FFF, 0 8px 12px rgba(214,98,23,0.18)',
-          }}
+
+        {/* Header / Logo */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, type: 'spring' }}
+          className="text-center mb-6"
         >
-          阳光竞技场
-        </h1>
-        <p className="text-sm sm:text-base text-[#8A7A6D] mt-1 font-semibold">
-          配置勇士数值，抽取未知魔物，开启对决！
-        </p>
-      </motion.div>
+          <div className="inline-flex items-center gap-2 bg-[#FFFBF2] px-4 py-1.5 rounded-full border-2 border-[#EEDCC4] shadow-sm text-xs sm:text-sm font-black text-[#FF8C42] mb-2.5">
+            <Sparkles className="w-4 h-4" />
+            <span>卡通扁平风 · 回合对决</span>
+          </div>
+          <h1
+            className="text-4xl sm:text-5xl font-black tracking-tight text-[#4A3323]"
+            style={{
+              textShadow: '0 4px 0 #FFF, 0 -2px 0 #FFF, 2px 0 0 #FFF, -2px 0 0 #FFF, 0 8px 12px rgba(214,98,23,0.18)',
+            }}
+          >
+            阳光竞技场
+          </h1>
+          <p className="text-sm sm:text-base text-[#8A7A6D] mt-1.5 font-bold">
+            配置勇士数值，抽取未知魔物，开启对决！
+          </p>
+        </motion.div>
 
       {/* Main Settings Card */}
       <motion.div
@@ -119,7 +119,7 @@ export const SetupPage: React.FC<SetupPageProps> = ({
             onChange={(e) => updateField('playerHP', Number(e.target.value))}
             className="w-full h-3 bg-[#EADBC8] rounded-full appearance-none cursor-pointer accent-[#4FB6E8]"
           />
-          <div className="flex justify-between text-[11px] text-[#8A7A6D] mt-1 font-semibold">
+          <div className="flex justify-between text-xs sm:text-sm text-[#8A7A6D] mt-1.5 font-bold">
             <span>50 脆弱</span>
             <span>100 标准</span>
             <span>300 泰坦</span>
@@ -129,7 +129,7 @@ export const SetupPage: React.FC<SetupPageProps> = ({
         {/* Player Attack (Slider + Stepper) */}
         <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm sm:text-base font-bold text-[#4A3323] flex items-center gap-1.5">
+            <label className="text-base sm:text-lg font-bold text-[#4A3323] flex items-center gap-1.5">
               <Swords className="w-4 h-4 text-[#FF8C42]" />
               攻击力 (Attack)
             </label>
@@ -162,7 +162,7 @@ export const SetupPage: React.FC<SetupPageProps> = ({
             onChange={(e) => updateField('playerAttack', Number(e.target.value))}
             className="w-full h-3 bg-[#EADBC8] rounded-full appearance-none cursor-pointer accent-[#FF8C42]"
           />
-          <div className="flex justify-between text-[11px] text-[#8A7A6D] mt-1 font-semibold">
+          <div className="flex justify-between text-xs sm:text-sm text-[#8A7A6D] mt-1.5 font-bold">
             <span>5 轻击</span>
             <span>20 强力</span>
             <span>60 毁灭</span>
@@ -174,10 +174,10 @@ export const SetupPage: React.FC<SetupPageProps> = ({
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="w-full flex items-center justify-between text-xs sm:text-sm font-bold text-[#8A7A6D] hover:text-[#4A3323] transition-colors py-1 cursor-pointer"
+            className="w-full flex items-center justify-between text-sm sm:text-base font-extrabold text-[#8A7A6D] hover:text-[#4A3323] transition-colors py-1 cursor-pointer"
           >
             <span>高级规则调整 (BOSS浮动 / 补给限制 / 揭露阈值)</span>
-            {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {showAdvanced ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
           </button>
 
           {showAdvanced && (

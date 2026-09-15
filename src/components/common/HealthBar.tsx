@@ -59,26 +59,26 @@ export const HealthBar: React.FC<HealthBarProps> = ({
   return (
     <div className="w-full select-none">
       {/* Header with Name & Numbers */}
-      <div className="flex items-center justify-between mb-1.5 px-1">
-        <div className="flex items-center gap-1.5">
-          {avatar && <span className="text-xl leading-none">{avatar}</span>}
-          <span className="font-bold text-sm sm:text-base text-[#4A3323] tracking-tight">{name}</span>
+      <div className="flex items-center justify-between mb-2 px-1">
+        <div className="flex items-center gap-2">
+          {avatar && <span className="text-2xl sm:text-2xl leading-none">{avatar}</span>}
+          <span className="font-extrabold text-base sm:text-lg text-[#4A3323] tracking-tight">{name}</span>
           {isLowHP && (
-            <span className="text-xs bg-[#E8432E] text-white px-2 py-0.5 rounded-full font-bold animate-pulse">
+            <span className="text-xs sm:text-sm bg-[#E8432E] text-white px-2.5 py-0.5 rounded-full font-bold animate-pulse">
               危机!
             </span>
           )}
         </div>
-        <div className="font-bold text-xs sm:text-sm text-[#8A7A6D]">
+        <div className="font-bold text-sm sm:text-base text-[#8A7A6D]">
           {showNumbers ? (
             <span className="text-[#4A3323]">
-              <span className="text-base sm:text-lg font-extrabold">{displayHP}</span>
-              <span className="opacity-60 text-xs"> / {maxHP}</span>
+              <span className="text-lg sm:text-xl font-black">{displayHP}</span>
+              <span className="opacity-75 text-sm sm:text-base font-bold"> / {maxHP}</span>
             </span>
           ) : isUnknown ? (
-            <span className="text-[#8A7A6D] text-xs bg-[#EADBC8] px-2 py-0.5 rounded-full">数值隐藏 🔒</span>
+            <span className="text-[#8A7A6D] text-xs sm:text-sm font-bold bg-[#EADBC8] px-2.5 py-1 rounded-full">数值隐藏 🔒</span>
           ) : (
-            <span className="text-sm font-extrabold text-[#4A3323]">{percentage}%</span>
+            <span className="text-base sm:text-lg font-black text-[#4A3323]">{percentage}%</span>
           )}
         </div>
       </div>
