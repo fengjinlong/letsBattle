@@ -123,18 +123,15 @@ export const SetupPage: React.FC<SetupPageProps> = ({
         transition={{ duration: 0.5, type: 'spring' }}
         className="text-center mb-5"
       >
-        <div className="inline-flex items-center gap-2 bg-[#FFFBF2] px-4 py-1.5 rounded-full border-2 border-[#EEDCC4] shadow-sm text-xs sm:text-sm font-black text-[#FF8C42] mb-2.5">
-          <Sparkles className="w-4 h-4" />
-          <span>卡通扁平风 · 回合对决</span>
-        </div>
-        <h1
+     
+        <h2
           className="text-4xl sm:text-5xl font-black tracking-tight text-[#4A3323]"
           style={{
             textShadow: '0 4px 0 #FFF, 0 -2px 0 #FFF, 2px 0 0 #FFF, -2px 0 0 #FFF, 0 8px 12px rgba(214,98,23,0.18)',
           }}
         >
           阳光竞技场
-        </h1>
+        </h2>
         <p className="text-sm sm:text-base text-[#8A7A6D] mt-1 font-bold">
           配置勇士数值与随身补给，开启畅快对决！
         </p>
