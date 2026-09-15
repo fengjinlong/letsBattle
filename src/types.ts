@@ -15,12 +15,24 @@ export interface BossPreset {
   themeColor: string;
 }
 
+export interface SupplyItem {
+  id: string;
+  name: string;
+  healAmount: number;
+  icon: string;
+  desc: string;
+  defaultCount: number;
+  color: string;
+  badge: string;
+}
+
 export interface GameConfig {
   playerHP: number;
   playerAttack: number;
   bossFluctuation: number; // e.g. 0.10 for 10%
-  maxSupplies: number; // e.g. 3
-  supplyHealAmount: number; // e.g. 35
+  maxSupplies?: number; // legacy fallback
+  suppliesInventory: Record<string, number>; // user configured initial inventory
+  supplyHealAmount?: number; // legacy fallback
   halfHpThreshold: number; // e.g. 0.50 (50%)
   maxExtraReveals: number; // e.g. 2 (making 3 reveals total: 1 initial + 2 additional)
 }
@@ -30,6 +42,7 @@ export interface PlayerState {
   currentHP: number;
   attack: number;
   suppliesLeft: number;
+  inventory: Record<string, number>;
 }
 
 export interface BossState {
@@ -46,6 +59,7 @@ export interface BattleStats {
   totalDamageDealt: number;
   totalDamageTaken: number;
   suppliesUsed: number;
+  suppliesUsedDetails?: Record<string, number>;
   result: BattleResult;
   bossName: string;
   bossTier: BossTier;

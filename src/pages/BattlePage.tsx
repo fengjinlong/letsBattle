@@ -16,6 +16,9 @@ import { ImpactEffect } from '../components/battle/ImpactEffect';
 import { DamageFloat } from '../components/battle/DamageFloat';
 import { HealParticles } from '../components/battle/HealParticles';
 import { RevealPanel } from '../components/battle/RevealPanel';
+import { SupplyModal } from '../components/battle/SupplyModal';
+import { SupplyItem } from '../types';
+import { getTotalSuppliesCount } from '../data/supplies';
 import { sound } from '../sound';
 import { Swords, HeartPulse, LogOut, ShieldAlert, Volume2, VolumeX } from 'lucide-react';
 
@@ -39,6 +42,7 @@ export const BattlePage: React.FC<BattlePageProps> = ({
   const [totalDamageDealt, setTotalDamageDealt] = useState(0);
   const [totalDamageTaken, setTotalDamageTaken] = useState(0);
   const [suppliesUsed, setSuppliesUsed] = useState(0);
+  const [suppliesUsedDetails, setSuppliesUsedDetails] = useState<Record<string, number>>({});
 
   // Animation & UI states
   const [isBusy, setIsBusy] = useState(false); // Disable actions during turn
@@ -54,6 +58,9 @@ export const BattlePage: React.FC<BattlePageProps> = ({
   const [bossIsHit, setBossIsHit] = useState(false);
   const [playerIsHit, setPlayerIsHit] = useState(false);
   const [playerIsHealed, setPlayerIsHealed] = useState(false);
+
+  // Supply Selection Modal state
+  const [isSupplyModalOpen, setIsSupplyModalOpen] = useState(false);
 
   // Half-HP Reveal State
   const [revealsCount, setRevealsCount] = useState(0);
@@ -193,13 +200,14 @@ export const BattlePage: React.FC<BattlePageProps> = ({
           totalDamageDealt,
           totalDamageTaken,
           suppliesUsed,
+          suppliesUsedDetails,
           result,
           bossName: currentBoss.preset.name,
           bossTier: currentBoss.preset.tier,
         });
       }, 950);
     },
-    [rounds, totalDamageDealt, totalDamageTaken, suppliesUsed, currentBoss, onFinishBattle]
+    [rounds, totalDamageDealt, totalDamageTaken, suppliesUsed, suppliesUsedDetails, currentBoss, onFinishBattle]
   );
 
   // BOSS counter attack timeline
@@ -321,10 +329,21 @@ export const BattlePage: React.FC<BattlePageProps> = ({
     }, 200);
   };
 
-  // Player supply action timeline
-  const handleSupply = () => {
+  // Open supply selection modal
+  const handleOpenSupplyModal = () => {
     if (isBusy || player.suppliesLeft <= 0 || player.currentHP <= 0) return;
+    sound.playButton();
+    setIsSupplyModalOpen(true);
+  };
 
+  // Player confirmed consuming a specific supply item
+  const handleSelectSupplyItem = (item: SupplyItem) => {
+    if (isBusy || player.currentHP <= 0) return;
+    const currentInventory = player.inventory || {};
+    const count = currentInventory[item.id] || 0;
+    if (count <= 0) return;
+
+    setIsSupplyModalOpen(false);
     if (revealPanel.isOpen) {
       setRevealPanel((prev) => ({ ...prev, isOpen: false }));
     }
@@ -332,15 +351,26 @@ export const BattlePage: React.FC<BattlePageProps> = ({
     setIsBusy(true);
     sound.playHeal();
     setSuppliesUsed((prev) => prev + 1);
+    setSuppliesUsedDetails((prev) => ({
+      ...prev,
+      [item.name]: (prev[item.name] || 0) + 1,
+    }));
 
-    const healAmount = config.supplyHealAmount;
+    const healAmount = item.healAmount;
     const nextHP = Math.min(player.maxHP, player.currentHP + healAmount);
     const actualHealed = nextHP - player.currentHP;
+
+    const nextInventory = {
+      ...currentInventory,
+      [item.id]: Math.max(0, count - 1),
+    };
+    const nextSuppliesLeft = getTotalSuppliesCount(nextInventory);
 
     setPlayer((prev) => ({
       ...prev,
       currentHP: nextHP,
-      suppliesLeft: prev.suppliesLeft - 1,
+      suppliesLeft: nextSuppliesLeft,
+      inventory: nextInventory,
     }));
 
     setPlayerAction('healing');
@@ -400,7 +430,7 @@ export const BattlePage: React.FC<BattlePageProps> = ({
             回合 {rounds}
           </span>
           <span className="font-cartoon text-xs sm:text-sm text-[#8A7A6D] hidden sm:inline-block bg-[#FFFBF2]/85 px-3 py-1 rounded-full border border-[#EEDCC4]">
-            补给剩余: {player.suppliesLeft}/{config.maxSupplies}
+            补给行囊: 余 {player.suppliesLeft} 件
           </span>
         </div>
 
@@ -614,7 +644,7 @@ export const BattlePage: React.FC<BattlePageProps> = ({
               player.currentHP >= player.maxHP
             }
             icon={<HeartPulse className="w-5 h-5" />}
-            onClick={handleSupply}
+            onClick={handleOpenSupplyModal}
           >
             补给 ({player.suppliesLeft})
           </Button>
@@ -628,8 +658,19 @@ export const BattlePage: React.FC<BattlePageProps> = ({
         suppliesLeft={player.suppliesLeft}
         isBusy={isBusy}
         onAttack={handleAttack}
-        onSupply={handleSupply}
+        onSupply={handleOpenSupplyModal}
         onFlee={handleFlee}
+      />
+
+      {/* Supply Selection Modal */}
+      <SupplyModal
+        isOpen={isSupplyModalOpen}
+        inventory={player.inventory || {}}
+        playerCurrentHP={player.currentHP}
+        playerMaxHP={player.maxHP}
+        isBusy={isBusy}
+        onSelect={handleSelectSupplyItem}
+        onClose={() => setIsSupplyModalOpen(false)}
       />
     </div>
   );

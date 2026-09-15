@@ -1,11 +1,15 @@
 import { BossPreset, GameConfig } from './types';
+import { SUPPLY_ITEMS, getTotalSuppliesCount, createInitialInventory } from './data/supplies';
+
+export * from './data/supplies';
 
 export const DEFAULT_CONFIG: GameConfig = {
   playerHP: 100,
   playerAttack: 20,
   bossFluctuation: 0.1, // +/- 10%
-  maxSupplies: 3,
-  supplyHealAmount: 35,
+  maxSupplies: 0,
+  suppliesInventory: createInitialInventory(), // default 0 for all items
+  supplyHealAmount: 20, // fallback
   halfHpThreshold: 0.5,
   maxExtraReveals: 2,
 };

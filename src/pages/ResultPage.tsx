@@ -3,15 +3,20 @@ import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { BattleStats } from '../types';
 import { Button } from '../components/common/Button';
-import { Trophy, Skull, RefreshCw, Flame, Award, Heart, Shield, ArrowRight } from 'lucide-react';
+import { RefreshCw, Award, HeartPulse, SlidersHorizontal } from 'lucide-react';
 import { sound } from '../sound';
 
 interface ResultPageProps {
   stats: BattleStats;
   onPlayAgain: () => void;
+  onBackToSetup?: () => void;
 }
 
-export const ResultPage: React.FC<ResultPageProps> = ({ stats, onPlayAgain }) => {
+export const ResultPage: React.FC<ResultPageProps> = ({
+  stats,
+  onPlayAgain,
+  onBackToSetup,
+}) => {
   const isVictory = stats.result === 'victory';
   const isDefeat = stats.result === 'defeat';
   const isFlee = stats.result === 'flee';
@@ -70,7 +75,7 @@ export const ResultPage: React.FC<ResultPageProps> = ({ stats, onPlayAgain }) =>
             胜利！
           </h2>
           <p className="text-sm font-bold text-[#8A7A6D] mt-1">
-            你成功击败了强大的对手，守护了竞技场的荣光！
+            你成功击败了对手，守护了竞技场的荣光！
           </p>
         </div>
       );
@@ -93,7 +98,7 @@ export const ResultPage: React.FC<ResultPageProps> = ({ stats, onPlayAgain }) =>
             倒下了…
           </h2>
           <p className="text-sm font-bold text-[#8A7A6D] mt-1">
-            不要气馁！调整属性配置，再次向它发起挑战！
+            不要气馁！可在属性设置中多备些补给美食，再次向它发起挑战！
           </p>
         </div>
       );
@@ -118,10 +123,13 @@ export const ResultPage: React.FC<ResultPageProps> = ({ stats, onPlayAgain }) =>
     );
   };
 
+  const usedDetails = stats.suppliesUsedDetails || {};
+  const hasUsedDetails = Object.keys(usedDetails).length > 0;
+
   return (
     <div
       className={`
-        w-full min-h-[90vh] max-w-md mx-auto px-4 py-8 flex flex-col justify-between items-center select-none
+        w-full min-h-[90vh] max-w-md mx-auto px-4 py-6 sm:py-8 flex flex-col justify-between items-center select-none
         ${isDefeat ? 'filter saturate-75' : ''}
       `}
     >
@@ -130,7 +138,7 @@ export const ResultPage: React.FC<ResultPageProps> = ({ stats, onPlayAgain }) =>
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="w-full text-center mt-4"
+        className="w-full text-center mt-2"
       >
         {getResultBadge()}
       </motion.div>
@@ -140,53 +148,95 @@ export const ResultPage: React.FC<ResultPageProps> = ({ stats, onPlayAgain }) =>
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.4 }}
-        className="w-full bg-[#FFFBF2] rounded-3xl border-4 border-[#EEDCC4] shadow-hard-card p-5 my-6"
+        className="w-full bg-[#FFFBF2] rounded-3xl border-4 border-[#EEDCC4] shadow-hard-card p-4 sm:p-5 my-5"
       >
-        <h3 className="text-lg font-black text-[#4A3323] border-b border-[#EEDCC4] pb-2.5 mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-black text-[#4A3323] border-b border-[#EEDCC4] pb-2.5 mb-3.5 flex items-center gap-2">
           <Award className="w-5 h-5 text-[#FF8C42]" />
           <span>战斗数据结算清单</span>
         </h3>
 
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border border-[#EEDCC4] text-center">
-            <div className="text-xs sm:text-sm text-[#8A7A6D] font-extrabold">对决对手</div>
-            <div className="text-lg font-black text-[#4A3323] truncate mt-0.5">
+        {/* 4 Major Stats */}
+        <div className="grid grid-cols-2 gap-2.5 mb-3.5">
+          <div className="bg-[#F9F2E7] p-3 rounded-2xl border border-[#EEDCC4] text-center">
+            <div className="text-xs text-[#8A7A6D] font-extrabold">对决对手</div>
+            <div className="text-base sm:text-lg font-black text-[#4A3323] truncate mt-0.5">
               {stats.bossName}
             </div>
           </div>
 
-          <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border border-[#EEDCC4] text-center">
-            <div className="text-xs sm:text-sm text-[#8A7A6D] font-extrabold">交锋回合数</div>
-            <div className="text-2xl font-black text-[#FF8C42] mt-0.5">
-              {stats.rounds} <span className="text-xs sm:text-sm font-bold text-[#8A7A6D]">回合</span>
+          <div className="bg-[#F9F2E7] p-3 rounded-2xl border border-[#EEDCC4] text-center">
+            <div className="text-xs text-[#8A7A6D] font-extrabold">交锋回合数</div>
+            <div className="text-xl sm:text-2xl font-black text-[#FF8C42] mt-0.5">
+              {stats.rounds} <span className="text-xs font-bold text-[#8A7A6D]">回合</span>
             </div>
           </div>
 
-          <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border border-[#EEDCC4] text-center">
-            <div className="text-xs sm:text-sm text-[#8A7A6D] font-extrabold">累计造成伤害</div>
-            <div className="text-2xl font-black text-[#E8432E] mt-0.5">
+          <div className="bg-[#F9F2E7] p-3 rounded-2xl border border-[#EEDCC4] text-center">
+            <div className="text-xs text-[#8A7A6D] font-extrabold">累计造成伤害</div>
+            <div className="text-xl sm:text-2xl font-black text-[#E8432E] mt-0.5">
               {stats.totalDamageDealt}
             </div>
           </div>
 
-          <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border border-[#EEDCC4] text-center">
-            <div className="text-xs sm:text-sm text-[#8A7A6D] font-extrabold">累计承受伤害</div>
-            <div className="text-2xl font-black text-[#4FB6E8] mt-0.5">
+          <div className="bg-[#F9F2E7] p-3 rounded-2xl border border-[#EEDCC4] text-center">
+            <div className="text-xs text-[#8A7A6D] font-extrabold">累计承受伤害</div>
+            <div className="text-xl sm:text-2xl font-black text-[#4FB6E8] mt-0.5">
               {stats.totalDamageTaken}
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between bg-[#F9F2E7] px-4 py-3 rounded-xl border border-[#EEDCC4] text-sm font-bold text-[#8A7A6D]">
-          <span>消耗补给次数</span>
-          <span className="font-black text-[#4A3323] text-base">
-            {stats.suppliesUsed} 次
-          </span>
+        {/* Highlighted Supply Usage Section */}
+        <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border-2 border-[#EEDCC4]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-[#E8F8E3] border border-[#C5EEBA] flex items-center justify-center text-[#56C93F]">
+                <HeartPulse className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-[#8A7A6D] block">补给消耗统计</span>
+                <span className="text-sm font-black text-[#4A3323]">
+                  {stats.suppliesUsed > 0 ? '本次对决已使用补给' : '未消耗任何补给'}
+                </span>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <span className="font-cartoon text-xl sm:text-2xl font-black text-[#56C93F]">
+                {stats.suppliesUsed}
+              </span>
+              <span className="text-xs font-black text-[#8A7A6D] ml-1">件</span>
+            </div>
+          </div>
+
+          {/* Detailed items consumed if any */}
+          {hasUsedDetails && (
+            <div className="mt-2.5 pt-2 border-t border-[#EEDCC4]/60">
+              <div className="text-[11px] font-bold text-[#8A7A6D] mb-1.5">消耗补给清单：</div>
+              <div className="flex flex-wrap gap-1.5">
+                {Object.entries(usedDetails).map(([name, count]) => (
+                  <span
+                    key={name}
+                    className="inline-flex items-center gap-1 text-xs font-black bg-[#FFFBF2] text-[#4A3323] px-2 py-0.5 rounded-lg border border-[#E0CCA9] shadow-2xs"
+                  >
+                    <span>{name}</span>
+                    <span className="text-[#FF8C42] font-cartoon font-bold">x{count}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {stats.suppliesUsed === 0 && (
+            <p className="text-[11px] text-[#8A7A6D] mt-1.5 font-bold">
+              💡 纯靠硬实力硬碰硬！若对决艰难，可在出征前配置更多补给品哦。
+            </p>
+          )}
         </div>
       </motion.div>
 
-      {/* Action Restart */}
-      <div className="w-full">
+      {/* Action Buttons */}
+      <div className="w-full space-y-2.5">
         <Button
           variant={isVictory ? 'success' : 'primary'}
           size="lg"
@@ -194,8 +244,20 @@ export const ResultPage: React.FC<ResultPageProps> = ({ stats, onPlayAgain }) =>
           icon={<RefreshCw className="w-5 h-5" />}
           onClick={onPlayAgain}
         >
-          再来一局 🔄
+          再战一局 🔄
         </Button>
+
+        {onBackToSetup && (
+          <Button
+            variant="weak"
+            size="md"
+            fullWidth
+            icon={<SlidersHorizontal className="w-4 h-4" />}
+            onClick={onBackToSetup}
+          >
+            调整属性与补给背包 ⚙️
+          </Button>
+        )}
       </div>
     </div>
   );

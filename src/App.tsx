@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Page, GameConfig, BossPreset, PlayerState, BossState, BattleStats } from './types';
-import { DEFAULT_CONFIG, BOSS_PRESETS } from './constants';
+import { DEFAULT_CONFIG, BOSS_PRESETS, createInitialInventory, getTotalSuppliesCount } from './constants';
 import { SetupPage } from './pages/SetupPage';
 import { DraftPage } from './pages/DraftPage';
 import { BattlePage } from './pages/BattlePage';
@@ -39,6 +39,12 @@ export default function App() {
     setCurrentPage('draft');
   };
 
+  const handleReturnToSetup = () => {
+    setCurrentPage('setup');
+  };
+
+  const activeInventory = config.suppliesInventory || createInitialInventory();
+
   return (
     <main className="min-h-[100dvh] w-full flex flex-col items-center justify-start">
       {currentPage === 'setup' && (
@@ -63,7 +69,8 @@ export default function App() {
             maxHP: config.playerHP,
             currentHP: config.playerHP,
             attack: config.playerAttack,
-            suppliesLeft: config.maxSupplies,
+            suppliesLeft: getTotalSuppliesCount(activeInventory),
+            inventory: { ...activeInventory },
           }}
           boss={{
             preset: selectedBossPreset,
@@ -79,6 +86,7 @@ export default function App() {
         <ResultPage
           stats={battleStats}
           onPlayAgain={handlePlayAgain}
+          onBackToSetup={handleReturnToSetup}
         />
       )}
     </main>
