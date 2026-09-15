@@ -1,9 +1,10 @@
 export type Page = 'setup' | 'draft' | 'battle' | 'result';
 
-export type BossTier = 'low' | 'mid' | 'high';
+export type BossId = 'wood_giant' | 'wolf_fang' | 'great_axe' | 'witch';
+export type BossTier = BossId | 'low' | 'mid' | 'high' | string;
 
 export interface BossPreset {
-  id: BossTier;
+  id: string;
   name: string;
   title: string;
   tier: BossTier;

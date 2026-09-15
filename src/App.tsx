@@ -9,7 +9,7 @@ import { ResultPage } from './pages/ResultPage';
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('setup');
   const [config, setConfig] = useState<GameConfig>(DEFAULT_CONFIG);
-  const [selectedBossPreset, setSelectedBossPreset] = useState<BossPreset>(BOSS_PRESETS.low);
+  const [selectedBossPreset, setSelectedBossPreset] = useState<BossPreset>(BOSS_PRESETS.wood_giant);
   const [battleStats, setBattleStats] = useState<BattleStats | null>(null);
 
   // Setup -> Draft

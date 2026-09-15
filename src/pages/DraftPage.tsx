@@ -1,28 +1,29 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BossPreset, BossTier } from '../types';
+import { BossPreset, BossId } from '../types';
 import { BOSS_PRESETS } from '../constants';
 import { Button } from '../components/common/Button';
 import { sound } from '../sound';
-import { RefreshCw, Swords, Sparkles, Flame, Shield, ArrowLeft } from 'lucide-react';
+import { RefreshCw, Swords, Sparkles, Flame, Shield, ArrowLeft, Skull } from 'lucide-react';
 
 interface DraftPageProps {
   onConfirmBoss: (boss: BossPreset) => void;
   onBack: () => void;
 }
 
+const BOSS_KEYS: BossId[] = ['wood_giant', 'wolf_fang', 'great_axe', 'witch'];
+
 export const DraftPage: React.FC<DraftPageProps> = ({
   onConfirmBoss,
   onBack,
 }) => {
-  const tiers: BossTier[] = ['low', 'mid', 'high'];
-  const [selectedTier, setSelectedTier] = useState<BossTier>(() => {
-    return tiers[Math.floor(Math.random() * tiers.length)];
+  const [selectedKey, setSelectedKey] = useState<BossId>(() => {
+    return BOSS_KEYS[Math.floor(Math.random() * BOSS_KEYS.length)];
   });
   const [isOpened, setIsOpened] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
 
-  const currentBoss = BOSS_PRESETS[selectedTier];
+  const currentBoss = BOSS_PRESETS[selectedKey] || BOSS_PRESETS.wood_giant;
 
   const handleOpenChest = () => {
     if (isOpened || isOpening) return;
@@ -39,10 +40,10 @@ export const DraftPage: React.FC<DraftPageProps> = ({
   const handleReroll = () => {
     sound.playButton();
     setIsOpened(false);
-    // Pick another tier randomly
-    const remaining = tiers.filter((t) => t !== selectedTier);
-    const nextTier = remaining[Math.floor(Math.random() * remaining.length)];
-    setSelectedTier(nextTier);
+    // Pick another boss randomly from the remaining 3
+    const remaining = BOSS_KEYS.filter((k) => k !== selectedKey);
+    const nextKey = remaining[Math.floor(Math.random() * remaining.length)];
+    setSelectedKey(nextKey);
 
     // Auto-open with quick animation
     setTimeout(() => {
@@ -55,38 +56,58 @@ export const DraftPage: React.FC<DraftPageProps> = ({
     }, 200);
   };
 
-  // Card tier frame style helper
-  const getTierCardStyle = (tier: BossTier) => {
-    switch (tier) {
-      case 'high':
+  // Card theme style for each boss
+  const getBossCardStyle = (key: BossId) => {
+    switch (key) {
+      case 'witch':
         return {
-          border: 'border-4 border-[#F59E0B]',
-          shadow: 'shadow-[0_8px_0_#B45309]',
-          badgeBg: 'bg-[#F59E0B]',
+          border: 'border-4 border-[#8A5CF6]',
+          shadow: 'shadow-[0_8px_0_#6234CE]',
+          badgeBg: 'bg-[#8A5CF6]',
           badgeText: 'text-white',
-          glow: 'ring-4 ring-[#F59E0B]/30',
+          glow: 'ring-4 ring-[#8A5CF6]/35',
+          bannerBg: 'bg-[#8A5CF6]',
+          bannerText: '极阶魔尊 · 禁咒降临!',
+          bannerIcon: <Skull className="w-3.5 h-3.5" />,
         };
-      case 'mid':
+      case 'great_axe':
         return {
-          border: 'border-4 border-[#94A3B8]',
-          shadow: 'shadow-[0_8px_0_#475569]',
-          badgeBg: 'bg-[#64748B]',
+          border: 'border-4 border-[#E07A2B]',
+          shadow: 'shadow-[0_8px_0_#A85312]',
+          badgeBg: 'bg-[#E07A2B]',
           badgeText: 'text-white',
-          glow: 'ring-4 ring-[#94A3B8]/20',
+          glow: 'ring-4 ring-[#E07A2B]/25',
+          bannerBg: 'bg-[#E07A2B]',
+          bannerText: '三阶霸主 · 狂怒破阵!',
+          bannerIcon: <Flame className="w-3.5 h-3.5" />,
         };
-      case 'low':
+      case 'wolf_fang':
+        return {
+          border: 'border-4 border-[#4B7B9E]',
+          shadow: 'shadow-[0_8px_0_#2E5675]',
+          badgeBg: 'bg-[#4B7B9E]',
+          badgeText: 'text-white',
+          glow: 'ring-4 ring-[#4B7B9E]/25',
+          bannerBg: 'bg-[#4B7B9E]',
+          bannerText: '二阶统领 · 嗜血撕裂!',
+          bannerIcon: <Sparkles className="w-3.5 h-3.5" />,
+        };
+      case 'wood_giant':
       default:
         return {
-          border: 'border-4 border-[#A0724C]',
-          shadow: 'shadow-[0_8px_0_#714B2C]',
-          badgeBg: 'bg-[#A0724C]',
+          border: 'border-4 border-[#739E52]',
+          shadow: 'shadow-[0_8px_0_#4E7234]',
+          badgeBg: 'bg-[#739E52]',
           badgeText: 'text-white',
-          glow: 'ring-2 ring-[#A0724C]/20',
+          glow: 'ring-4 ring-[#739E52]/25',
+          bannerBg: 'bg-[#739E52]',
+          bannerText: '一阶守卫 · 苍木厚甲!',
+          bannerIcon: <Shield className="w-3.5 h-3.5" />,
         };
     }
   };
 
-  const tierStyle = getTierCardStyle(selectedTier);
+  const cardStyle = getBossCardStyle(selectedKey);
 
   return (
     <div className="w-full max-w-md mx-auto px-4 py-6 sm:py-8 flex flex-col items-center min-h-[90vh] justify-between">
@@ -100,7 +121,7 @@ export const DraftPage: React.FC<DraftPageProps> = ({
           <span>返回调整属性</span>
         </button>
         <span className="text-xs font-extrabold text-[#4A3323] bg-[#FFFBF2] px-3 py-1 rounded-full border border-[#EEDCC4]">
-          阶段 2/3 · 抽取对手
+          阶段 2/3 · 抽取魔物
         </span>
       </div>
 
@@ -156,28 +177,14 @@ export const DraftPage: React.FC<DraftPageProps> = ({
               transition={{ type: 'spring', damping: 18, stiffness: 200 }}
               className={`
                 w-full bg-[#FFFBF2] rounded-3xl p-6 text-center select-none relative
-                ${tierStyle.border} ${tierStyle.shadow} ${tierStyle.glow}
+                ${cardStyle.border} ${cardStyle.shadow} ${cardStyle.glow}
               `}
             >
-              {/* Flame or Sparkle effect for High / Mid tier */}
-              {selectedTier === 'high' && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#E8432E] text-white text-xs font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1 animate-bounce">
-                  <Flame className="w-3.5 h-3.5" />
-                  <span>极度危险 · 霸主级降临!</span>
-                </div>
-              )}
-              {selectedTier === 'mid' && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#64748B] text-white text-xs font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>中阶强敌 · 精英警戒</span>
-                </div>
-              )}
-              {selectedTier === 'low' && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#A0724C] text-white text-xs font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1">
-                  <Shield className="w-3.5 h-3.5" />
-                  <span>巡逻魔物 · 练手对决</span>
-                </div>
-              )}
+              {/* Boss Tier Banner */}
+              <div className={`absolute -top-3.5 left-1/2 -translate-x-1/2 ${cardStyle.bannerBg} text-white text-xs font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1`}>
+                {cardStyle.bannerIcon}
+                <span>{cardStyle.bannerText}</span>
+              </div>
 
               {/* Boss Silhouette and Avatar */}
               <div className="my-5 flex flex-col items-center">
@@ -191,7 +198,7 @@ export const DraftPage: React.FC<DraftPageProps> = ({
                   <div className="absolute top-1.5 left-2 w-1/3 h-1/3 rounded-full bg-white/35" />
                 </div>
 
-                <div className={`px-3.5 py-1 rounded-full text-xs sm:text-sm font-black ${tierStyle.badgeBg} ${tierStyle.badgeText} mb-1.5`}>
+                <div className={`px-3.5 py-1 rounded-full text-xs sm:text-sm font-black ${cardStyle.badgeBg} ${cardStyle.badgeText} mb-1.5`}>
                   {currentBoss.tierLabel}
                 </div>
 
@@ -207,8 +214,8 @@ export const DraftPage: React.FC<DraftPageProps> = ({
                   {currentBoss.desc}
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm font-extrabold text-[#4A3323] bg-[#EADBC8]/70 py-2 px-3.5 rounded-xl border border-[#DFC9AF]">
-                  <span>🛡️ 生命值：<span className="text-[#8A7A6D]">??? (未知隐藏)</span></span>
-                  <span>⚔️ 攻击力：<span className="text-[#8A7A6D]">??? (未知隐藏)</span></span>
+                  <span>🛡️ 生命值：<span className="text-[#8A7A6D]">??? (隐藏待揭示)</span></span>
+                  <span>⚔️ 攻击力：<span className="text-[#8A7A6D]">??? (隐藏待揭示)</span></span>
                 </div>
               </div>
 

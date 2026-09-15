@@ -8,11 +8,9 @@ import {
   ChevronUp,
   Swords,
   Heart,
-  Sparkles,
   Volume2,
   VolumeX,
   Shield,
-  Backpack,
   RotateCcw,
   Plus,
   Minus,
@@ -159,17 +157,25 @@ export const SetupPage: React.FC<SetupPageProps> = ({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => updateField('playerHP', Math.max(50, config.playerHP - 10))}
+                onClick={() => updateField('playerHP', Math.max(100, config.playerHP - 50))}
                 className="w-8 h-8 rounded-full bg-[#EADBC8] text-[#4A3323] font-black text-base flex items-center justify-center hover:bg-[#DECABE] active:translate-y-[1px] shadow-sm cursor-pointer"
               >
                 -
               </button>
-              <span className="w-14 text-center font-extrabold text-xl text-[#4A3323]">
-                {config.playerHP}
-              </span>
+              <input
+                type="number"
+                min="100"
+                max="10000"
+                value={config.playerHP}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  updateField('playerHP', isNaN(val) ? 100 : Math.max(10, Math.min(10000, val)));
+                }}
+                className="w-16 text-center font-extrabold text-lg text-[#4A3323] bg-[#F2ECE4] rounded-lg border border-[#DECABE] py-0.5 focus:outline-none focus:ring-2 focus:ring-[#4FB6E8]"
+              />
               <button
                 type="button"
-                onClick={() => updateField('playerHP', Math.min(300, config.playerHP + 10))}
+                onClick={() => updateField('playerHP', Math.min(10000, config.playerHP + 50))}
                 className="w-8 h-8 rounded-full bg-[#EADBC8] text-[#4A3323] font-black text-base flex items-center justify-center hover:bg-[#DECABE] active:translate-y-[1px] shadow-sm cursor-pointer"
               >
                 +
@@ -178,17 +184,17 @@ export const SetupPage: React.FC<SetupPageProps> = ({
           </div>
           <input
             type="range"
-            min="50"
-            max="300"
-            step="5"
-            value={config.playerHP}
+            min="100"
+            max="5000"
+            step="50"
+            value={Math.min(5000, config.playerHP)}
             onChange={(e) => updateField('playerHP', Number(e.target.value))}
             className="w-full h-3 bg-[#EADBC8] rounded-full appearance-none cursor-pointer accent-[#4FB6E8]"
           />
           <div className="flex justify-between text-xs sm:text-sm text-[#8A7A6D] mt-1.5 font-bold">
-            <span>50 脆弱</span>
-            <span>100 标准</span>
-            <span>300 泰坦</span>
+            <span>100 挑战</span>
+            <span>500 平衡</span>
+            <span>5000 泰坦</span>
           </div>
         </div>
 
@@ -202,17 +208,25 @@ export const SetupPage: React.FC<SetupPageProps> = ({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => updateField('playerAttack', Math.max(5, config.playerAttack - 5))}
+                onClick={() => updateField('playerAttack', Math.max(10, config.playerAttack - 10))}
                 className="w-8 h-8 rounded-full bg-[#EADBC8] text-[#4A3323] font-black text-base flex items-center justify-center hover:bg-[#DECABE] active:translate-y-[1px] shadow-sm cursor-pointer"
               >
                 -
               </button>
-              <span className="w-14 text-center font-extrabold text-xl text-[#4A3323]">
-                {config.playerAttack}
-              </span>
+              <input
+                type="number"
+                min="10"
+                max="2000"
+                value={config.playerAttack}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  updateField('playerAttack', isNaN(val) ? 10 : Math.max(1, Math.min(2000, val)));
+                }}
+                className="w-16 text-center font-extrabold text-lg text-[#4A3323] bg-[#F2ECE4] rounded-lg border border-[#DECABE] py-0.5 focus:outline-none focus:ring-2 focus:ring-[#FF8C42]"
+              />
               <button
                 type="button"
-                onClick={() => updateField('playerAttack', Math.min(60, config.playerAttack + 5))}
+                onClick={() => updateField('playerAttack', Math.min(2000, config.playerAttack + 10))}
                 className="w-8 h-8 rounded-full bg-[#EADBC8] text-[#4A3323] font-black text-base flex items-center justify-center hover:bg-[#DECABE] active:translate-y-[1px] shadow-sm cursor-pointer"
               >
                 +
@@ -221,17 +235,17 @@ export const SetupPage: React.FC<SetupPageProps> = ({
           </div>
           <input
             type="range"
-            min="5"
-            max="60"
-            step="1"
-            value={config.playerAttack}
+            min="10"
+            max="1000"
+            step="10"
+            value={Math.min(1000, config.playerAttack)}
             onChange={(e) => updateField('playerAttack', Number(e.target.value))}
             className="w-full h-3 bg-[#EADBC8] rounded-full appearance-none cursor-pointer accent-[#FF8C42]"
           />
           <div className="flex justify-between text-xs sm:text-sm text-[#8A7A6D] mt-1.5 font-bold">
-            <span>5 轻击</span>
-            <span>20 强力</span>
-            <span>60 毁灭</span>
+            <span>10 试炼</span>
+            <span>100 强攻</span>
+            <span>1000 斩杀</span>
           </div>
         </div>
       </motion.div>
