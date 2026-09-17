@@ -622,24 +622,28 @@ export const BattlePage: React.FC<BattlePageProps> = ({
       </div>
 
       {/* ===================== BOTTOM ACTION BAR (Sticky & Safe Area) ===================== */}
-      <div className="w-full bg-[#FFFBF2] border-t-4 border-[#EEDCC4] shadow-[0_-4px_12px_rgba(74,51,35,0.06)] px-4 py-3 sm:py-4 pb-[max(1rem,env(safe-area-inset-bottom))] z-20">
-        <div className="w-full max-w-lg mx-auto flex items-center justify-center gap-2 sm:gap-3">
-          <div className="flex-1">
+      <div className="w-full bg-[#FFFBF2] border-t-4 border-[#EEDCC4] shadow-[0_-4px_12px_rgba(74,51,35,0.06)] px-2 sm:px-4 py-2.5 sm:py-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-20">
+        <div className="w-full max-w-lg mx-auto flex items-center justify-between gap-1.5 sm:gap-3">
+          {/* 攻击按钮 (约 35% 宽度) */}
+          <div className="w-[35%] min-w-0">
             <Button
               variant="primary"
-              size="lg"
+              size="md"
               fullWidth
               disabled={isBusy || player.currentHP <= 0 || currentBoss.currentHP <= 0}
-              icon={<Swords className="w-5 h-5" />}
+              icon={<Swords className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />}
+              className="px-1.5 sm:px-5 text-xs sm:text-base min-h-[42px] sm:min-h-[48px] gap-1 sm:gap-2 shadow-hard-orange"
               onClick={handleAttack}
             >
-              攻击 💥
+              <span className="truncate">攻击 💥</span>
             </Button>
           </div>
-          <div className="flex-1">
+
+          {/* 补给按钮 (约 38% 宽度) */}
+          <div className="w-[38%] min-w-0">
             <Button
               variant="secondary"
-              size="lg"
+              size="md"
               fullWidth
               disabled={
                 isBusy ||
@@ -647,23 +651,27 @@ export const BattlePage: React.FC<BattlePageProps> = ({
                 player.currentHP <= 0 ||
                 player.currentHP >= player.maxHP
               }
-              icon={<HeartPulse className="w-5 h-5" />}
+              icon={<HeartPulse className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />}
+              className="px-1.5 sm:px-5 text-xs sm:text-base min-h-[42px] sm:min-h-[48px] gap-1 sm:gap-2 shadow-hard-blue"
               onClick={handleOpenSupplyModal}
             >
-              补给 ({player.suppliesLeft})
+              <span className="truncate">补给 ({player.suppliesLeft})</span>
             </Button>
           </div>
-          <div className="shrink-0">
+
+          {/* 逃离按钮 (约 27% 宽度) */}
+          <div className="w-[27%] min-w-0">
             <Button
               variant="ghost"
-              size="lg"
+              size="md"
+              fullWidth
               disabled={isBusy || player.currentHP <= 0 || currentBoss.currentHP <= 0}
-              icon={<LogOut className="w-4 h-4" />}
+              icon={<LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />}
               onClick={handleFlee}
-              className="text-[#E8432E] hover:text-[#B82816] hover:bg-[#FEEAE6] border-[#F8D2CB] whitespace-nowrap px-3 sm:px-4"
+              className="px-1.5 sm:px-4 text-xs sm:text-base min-h-[42px] sm:min-h-[48px] gap-1 sm:gap-1.5 text-[#E8432E] hover:text-[#B82816] hover:bg-[#FEEAE6] border-[#F8D2CB] whitespace-nowrap"
               title="脱离对决，逃跑判负"
             >
-              逃跑 💨
+              <span className="truncate">逃离 💨</span>
             </Button>
           </div>
         </div>
