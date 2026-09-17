@@ -104,20 +104,26 @@ export const ResultPage: React.FC<ResultPageProps> = ({
       );
     }
 
-    // Flee
+    // Flee (逃跑/放弃 相当于 失败)
     return (
       <div className="flex flex-col items-center">
-        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#8A7A6D] border-4 border-white shadow-hard-brown flex items-center justify-center text-5xl sm:text-6xl mb-3">
+        <motion.div
+          initial={{ scale: 0.8, y: -10 }}
+          animate={{ scale: 1, y: 0 }}
+          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#E8432E] border-4 border-white shadow-[0_4px_0_#B82816] flex items-center justify-center text-5xl sm:text-6xl mb-3"
+        >
           💨
-        </div>
-        <span className="text-xs font-black bg-[#8A7A6D]/15 text-[#8A7A6D] px-3 py-1 rounded-full mb-1">
-          审时度势 · 保全战力
+        </motion.div>
+        <span className="text-xs font-black bg-[#E8432E]/15 text-[#E8432E] px-3 py-1 rounded-full mb-1">
+          {stats.rounds === 0 ? '放弃迎战 · 判定失败' : '脱离战场 · 逃跑失败'}
         </span>
-        <h2 className="text-4xl sm:text-5xl font-black text-[#8A7A6D] tracking-tight">
-          撤退
+        <h2 className="text-4xl sm:text-5xl font-black text-[#E8432E] tracking-tight">
+          {stats.rounds === 0 ? '放弃挑战' : '逃跑失败！'}
         </h2>
         <p className="text-sm font-bold text-[#8A7A6D] mt-1">
-          你机智地脱离了战场，留得青山在，不怕没柴烧。
+          {stats.rounds === 0
+            ? `面对【${stats.bossName}】选择放弃迎战，根据竞技场规则判定失败！`
+            : `在对决途中选择逃跑脱离，根据竞技场规则判定挑战失败！`}
         </p>
       </div>
     );
@@ -130,7 +136,7 @@ export const ResultPage: React.FC<ResultPageProps> = ({
     <div
       className={`
         w-full min-h-[90vh] max-w-md mx-auto px-4 py-6 sm:py-8 flex flex-col justify-between items-center select-none
-        ${isDefeat ? 'filter saturate-75' : ''}
+        ${isDefeat || isFlee ? 'filter saturate-75' : ''}
       `}
     >
       {/* Result Graphic & Title */}

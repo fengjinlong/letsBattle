@@ -4,10 +4,11 @@ import { BossPreset, BossId } from '../types';
 import { BOSS_PRESETS } from '../constants';
 import { Button } from '../components/common/Button';
 import { sound } from '../sound';
-import { RefreshCw, Swords, Sparkles, Flame, Shield, ArrowLeft, Skull } from 'lucide-react';
+import { RefreshCw, Swords, Sparkles, Flame, Shield, ArrowLeft, Skull, Flag } from 'lucide-react';
 
 interface DraftPageProps {
   onConfirmBoss: (boss: BossPreset) => void;
+  onAbandonBoss?: (boss: BossPreset) => void;
   onBack: () => void;
 }
 
@@ -15,6 +16,7 @@ const BOSS_KEYS: BossId[] = ['wood_giant', 'wolf_fang', 'great_axe', 'witch'];
 
 export const DraftPage: React.FC<DraftPageProps> = ({
   onConfirmBoss,
+  onAbandonBoss,
   onBack,
 }) => {
   const [selectedKey, setSelectedKey] = useState<BossId>(() => {
@@ -230,23 +232,39 @@ export const DraftPage: React.FC<DraftPageProps> = ({
       {/* Bottom CTA Operations */}
       <div className="w-full mt-6 space-y-3">
         {isOpened ? (
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button
-              variant="primary"
-              size="lg"
-              fullWidth
-              icon={<Swords className="w-5 h-5" />}
-              onClick={() => onConfirmBoss(currentBoss)}
-            >
-              开始决斗 💥
-            </Button>
+          <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col sm:flex-row gap-2.5">
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
+                icon={<Swords className="w-5 h-5" />}
+                onClick={() => onConfirmBoss(currentBoss)}
+              >
+                开始决斗 💥
+              </Button>
+              <Button
+                variant="ghost"
+                size="md"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={handleReroll}
+              >
+                重新抽取
+              </Button>
+            </div>
+
             <Button
               variant="ghost"
               size="md"
-              icon={<RefreshCw className="w-4 h-4" />}
-              onClick={handleReroll}
+              fullWidth
+              icon={<Flag className="w-4 h-4" />}
+              className="text-[#E8432E] hover:text-[#B82816] hover:bg-[#FEEAE6] border-[#F8D2CB]"
+              onClick={() => {
+                sound.playDefeat();
+                onAbandonBoss?.(currentBoss);
+              }}
             >
-              重新抽取
+              放弃挑战 (逃跑判负) 🏳️
             </Button>
           </div>
         ) : (

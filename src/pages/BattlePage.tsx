@@ -191,6 +191,7 @@ export const BattlePage: React.FC<BattlePageProps> = ({
         sound.playDefeat();
         setPlayerAction('defeated');
       } else if (result === 'flee') {
+        sound.playDefeat();
         setPlayerAction('fleeing');
       }
 
@@ -399,7 +400,7 @@ export const BattlePage: React.FC<BattlePageProps> = ({
 
   // Player flee action
   const handleFlee = () => {
-    if (isBusy) return;
+    if (isBusy || player.currentHP <= 0 || currentBoss.currentHP <= 0) return;
     if (revealPanel.isOpen) {
       setRevealPanel((prev) => ({ ...prev, isOpen: false }));
     }
@@ -622,33 +623,49 @@ export const BattlePage: React.FC<BattlePageProps> = ({
 
       {/* ===================== BOTTOM ACTION BAR (Sticky & Safe Area) ===================== */}
       <div className="w-full bg-[#FFFBF2] border-t-4 border-[#EEDCC4] shadow-[0_-4px_12px_rgba(74,51,35,0.06)] px-4 py-3 sm:py-4 pb-[max(1rem,env(safe-area-inset-bottom))] z-20">
-        <div className="w-full max-w-lg mx-auto flex items-center justify-center gap-2.5 sm:gap-4">
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            disabled={isBusy || player.currentHP <= 0 || currentBoss.currentHP <= 0}
-            icon={<Swords className="w-5 h-5" />}
-            onClick={handleAttack}
-          >
-            攻击 💥
-          </Button>
-          <Button
-            variant="secondary"
-            size="lg"
-            fullWidth
-            disabled={
-              isBusy ||
-              player.suppliesLeft <= 0 ||
-              player.currentHP <= 0 ||
-              player.currentHP >= player.maxHP
-            }
-            icon={<HeartPulse className="w-5 h-5" />}
-            onClick={handleOpenSupplyModal}
-          >
-            补给 ({player.suppliesLeft})
-          </Button>
-        
+        <div className="w-full max-w-lg mx-auto flex items-center justify-center gap-2 sm:gap-3">
+          <div className="flex-1">
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              disabled={isBusy || player.currentHP <= 0 || currentBoss.currentHP <= 0}
+              icon={<Swords className="w-5 h-5" />}
+              onClick={handleAttack}
+            >
+              攻击 💥
+            </Button>
+          </div>
+          <div className="flex-1">
+            <Button
+              variant="secondary"
+              size="lg"
+              fullWidth
+              disabled={
+                isBusy ||
+                player.suppliesLeft <= 0 ||
+                player.currentHP <= 0 ||
+                player.currentHP >= player.maxHP
+              }
+              icon={<HeartPulse className="w-5 h-5" />}
+              onClick={handleOpenSupplyModal}
+            >
+              补给 ({player.suppliesLeft})
+            </Button>
+          </div>
+          <div className="shrink-0">
+            <Button
+              variant="ghost"
+              size="lg"
+              disabled={isBusy || player.currentHP <= 0 || currentBoss.currentHP <= 0}
+              icon={<LogOut className="w-4 h-4" />}
+              onClick={handleFlee}
+              className="text-[#E8432E] hover:text-[#B82816] hover:bg-[#FEEAE6] border-[#F8D2CB] whitespace-nowrap px-3 sm:px-4"
+              title="脱离对决，逃跑判负"
+            >
+              逃跑 💨
+            </Button>
+          </div>
         </div>
       </div>
 

@@ -23,6 +23,22 @@ export default function App() {
     setCurrentPage('battle');
   };
 
+  // Draft -> Abandon (Flee defeat)
+  const handleAbandonBoss = (boss: BossPreset) => {
+    setSelectedBossPreset(boss);
+    setBattleStats({
+      rounds: 0,
+      totalDamageDealt: 0,
+      totalDamageTaken: 0,
+      suppliesUsed: 0,
+      suppliesUsedDetails: {},
+      result: 'flee',
+      bossName: boss.name,
+      bossTier: boss.tier,
+    });
+    setCurrentPage('result');
+  };
+
   // Draft -> Setup
   const handleBackToSetup = () => {
     setCurrentPage('setup');
@@ -58,6 +74,7 @@ export default function App() {
       {currentPage === 'draft' && (
         <DraftPage
           onConfirmBoss={handleConfirmBoss}
+          onAbandonBoss={handleAbandonBoss}
           onBack={handleBackToSetup}
         />
       )}
