@@ -428,7 +428,7 @@ export const SetupPage: React.FC<SetupPageProps> = ({
               <input
                 type="range"
                 min="0"
-                max="0.3"
+                max="0.5"
                 step="0.05"
                 value={config.bossFluctuation}
                 onChange={(e) => updateField('bossFluctuation', Number(e.target.value))}

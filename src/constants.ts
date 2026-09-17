@@ -6,7 +6,7 @@ export * from './data/supplies';
 export const DEFAULT_CONFIG: GameConfig = {
   playerHP: 500,
   playerAttack: 100,
-  bossFluctuation: 0.1, // +/- 10%
+  bossFluctuation: 0.3, // +/- 10%
   maxSupplies: 0,
   suppliesInventory: createInitialInventory(), // default 0 for all items
   supplyHealAmount: 20, // fallback
