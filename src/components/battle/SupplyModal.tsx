@@ -4,7 +4,7 @@ import { SupplyItem } from '../../types';
 import { SUPPLY_ITEMS, getTotalSuppliesCount } from '../../data/supplies';
 import { Button } from '../common/Button';
 import { sound } from '../../sound';
-import { X, Heart, AlertCircle, Sparkles, PackageOpen } from 'lucide-react';
+import { X, Heart, AlertCircle, PackageOpen } from 'lucide-react';
 
 interface SupplyModalProps {
   isOpen: boolean;
@@ -32,6 +32,11 @@ export const SupplyModal: React.FC<SupplyModalProps> = ({
   const isFullHP = playerCurrentHP >= playerMaxHP;
   const totalAvailable = getTotalSuppliesCount(inventory);
 
+  // 只展示当前拥有数量大于 0 的补给物品，没有的补给不显示
+  const availableItems = SUPPLY_ITEMS.filter(
+    (item) => (inventory[item.id] || 0) > 0
+  );
+
   const handleSelectItem = (item: SupplyItem) => {
     const count = inventory[item.id] || 0;
     if (isBusy || count <= 0 || isFullHP) {
@@ -48,7 +53,7 @@ export const SupplyModal: React.FC<SupplyModalProps> = ({
   };
 
   const hoveredItem = hoveredItemId
-    ? SUPPLY_ITEMS.find((i) => i.id === hoveredItemId)
+    ? availableItems.find((i) => i.id === hoveredItemId)
     : null;
 
   const previewHP = hoveredItem
@@ -90,7 +95,7 @@ export const SupplyModal: React.FC<SupplyModalProps> = ({
                   </span>
                 </h3>
                 <p className="text-xs text-[#8A7A6D] font-bold">
-                  无使用次数限制，直到背包耗尽！
+                  仅显示当前拥有的补给，点击即可立即食用恢复！
                 </p>
               </div>
             </div>
@@ -152,18 +157,18 @@ export const SupplyModal: React.FC<SupplyModalProps> = ({
             )}
           </div>
 
-          {/* Supply Items Scrollable List */}
+          {/* Supply Items Scrollable List - 仅展示拥有的物品 */}
           <div className="flex-1 overflow-y-auto pr-1 -mr-1 space-y-2 mb-3 min-h-[140px] custom-scrollbar">
-            {totalAvailable === 0 ? (
+            {availableItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center text-[#8A7A6D]">
                 <PackageOpen className="w-12 h-12 text-[#C5B4A3] mb-2" />
                 <p className="font-extrabold text-base text-[#4A3323]">行囊空空如也</p>
                 <p className="text-xs mt-1 text-[#8A7A6D]">
-                  在开始游戏前的属性设置中添加补给物资后再来吧！
+                  当前已无可用补给物品！
                 </p>
               </div>
             ) : (
-              SUPPLY_ITEMS.map((item) => {
+              availableItems.map((item) => {
                 const count = inventory[item.id] || 0;
                 const isAvailable = count > 0 && !isFullHP && !isBusy;
 
@@ -176,9 +181,7 @@ export const SupplyModal: React.FC<SupplyModalProps> = ({
                     className={`
                       w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border-2 transition-all
                       ${
-                        count <= 0
-                          ? 'bg-[#F2ECE4]/60 border-[#E5DACD] opacity-45 cursor-not-allowed'
-                          : isFullHP
+                        isFullHP
                           ? 'bg-[#FFFBF2] border-[#EEDCC4] opacity-75 cursor-not-allowed'
                           : 'bg-[#FFFBF2] border-[#EEDCC4] hover:border-[#FF8C42] hover:shadow-sm active:translate-y-[1px] cursor-pointer'
                       }
@@ -223,12 +226,8 @@ export const SupplyModal: React.FC<SupplyModalProps> = ({
                         +{item.healAmount} HP
                       </span>
 
-                      <span
-                        className={`text-xs font-black mt-1 ${
-                          count > 0 ? 'text-[#4A3323]' : 'text-[#A09388]'
-                        }`}
-                      >
-                        {count > 0 ? `剩余: x${count}` : '已耗尽'}
+                      <span className="text-xs font-black mt-1 text-[#FF8C42]">
+                        拥有: x{count}
                       </span>
                     </div>
                   </div>
