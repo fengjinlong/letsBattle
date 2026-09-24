@@ -6,12 +6,14 @@ export * from './data/supplies';
 export const DEFAULT_CONFIG: GameConfig = {
   playerHP: 500,
   playerAttack: 100,
-  bossFluctuation: 0.3, // +/- 10%
+  bossFluctuation: 0.3, // +/- 30%
   maxSupplies: 0,
   suppliesInventory: createInitialInventory(), // default 0 for all items
   supplyHealAmount: 20, // fallback
   halfHpThreshold: 0.5,
   maxExtraReveals: 2,
+  playerCritChance: 0.2, // 20% 暴击率
+  playerCritBonus: 2.0, // 暴击时攻击力增加 200% (即达到 300% 伤害)
 };
 
 /**

@@ -36,6 +36,8 @@ export interface GameConfig {
   supplyHealAmount?: number; // legacy fallback
   halfHpThreshold: number; // e.g. 0.50 (50%)
   maxExtraReveals: number; // e.g. 2 (making 3 reveals total: 1 initial + 2 additional)
+  playerCritChance?: number; // e.g. 0.20 for 20%
+  playerCritBonus?: number; // e.g. 2.0 for +200% attack increase
 }
 
 export interface PlayerState {
@@ -64,14 +66,16 @@ export interface BattleStats {
   result: BattleResult;
   bossName: string;
   bossTier: BossTier;
+  critCount?: number;
 }
 
 export interface FloatingDamage {
   id: string;
   target: 'player' | 'boss';
   amount: number | string;
-  type: 'damage' | 'heal' | 'miss';
+  type: 'damage' | 'heal' | 'miss' | 'crit';
   color: string;
+  isCrit?: boolean;
 }
 
 export interface RevealState {

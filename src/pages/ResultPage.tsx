@@ -192,6 +192,25 @@ export const ResultPage: React.FC<ResultPageProps> = ({
           </div>
         </div>
 
+        {/* Critical strike trigger statistics if triggered */}
+        {(stats.critCount ?? 0) > 0 && (
+          <div className="mb-3.5 bg-[#FFF0F3] px-3.5 py-2.5 rounded-2xl border border-[#FFD0DB] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">💥</span>
+              <div>
+                <span className="text-xs font-bold text-[#8A7A6D] block">对决暴击次数</span>
+                <span className="text-xs sm:text-sm font-black text-[#FF1E44]">成功触发致命一击</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="font-cartoon text-xl font-black text-[#FF1E44]">
+                {stats.critCount}
+              </span>
+              <span className="text-xs font-black text-[#8A7A6D] ml-1">次</span>
+            </div>
+          </div>
+        )}
+
         {/* Highlighted Supply Usage Section */}
         <div className="bg-[#F9F2E7] p-3.5 rounded-2xl border-2 border-[#EEDCC4]">
           <div className="flex items-center justify-between">

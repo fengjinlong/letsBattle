@@ -43,13 +43,15 @@ export const BattlePage: React.FC<BattlePageProps> = ({
   const [totalDamageTaken, setTotalDamageTaken] = useState(0);
   const [suppliesUsed, setSuppliesUsed] = useState(0);
   const [suppliesUsedDetails, setSuppliesUsedDetails] = useState<Record<string, number>>({});
+  const [critCount, setCritCount] = useState(0);
 
   // Animation & UI states
   const [isBusy, setIsBusy] = useState(false); // Disable actions during turn
   const [screenShake, setScreenShake] = useState<'none' | 'mild' | 'strong'>('none');
   const [playerAction, setPlayerAction] = useState<AvatarActionState>('idle');
   const [bossAction, setBossAction] = useState<AvatarActionState>('idle');
-  const [impactEffect, setImpactEffect] = useState<{ show: boolean; color: string } | null>(null);
+  const [impactEffect, setImpactEffect] = useState<{ show: boolean; color: string; isCrit?: boolean } | null>(null);
+  const [critBanner, setCritBanner] = useState<{ show: boolean; damage: number } | null>(null);
   const [showHealSwirl, setShowHealSwirl] = useState(false);
   const [floatingDamages, setFloatingDamages] = useState<FloatingDamage[]>([]);
   const [isMuted, setIsMuted] = useState(sound.isMuted);
@@ -205,10 +207,11 @@ export const BattlePage: React.FC<BattlePageProps> = ({
           result,
           bossName: currentBoss.preset.name,
           bossTier: currentBoss.preset.tier,
+          critCount,
         });
       }, 950);
     },
-    [rounds, totalDamageDealt, totalDamageTaken, suppliesUsed, suppliesUsedDetails, currentBoss, onFinishBattle]
+    [rounds, totalDamageDealt, totalDamageTaken, suppliesUsed, suppliesUsedDetails, currentBoss, critCount, onFinishBattle]
   );
 
   // BOSS counter attack timeline
@@ -289,23 +292,36 @@ export const BattlePage: React.FC<BattlePageProps> = ({
 
       setTimeout(() => {
         // 500-550ms: Hit impact
-        const dmg = playerRef.current.attack;
+        const baseAttack = playerRef.current.attack;
+        const critChance = config.playerCritChance ?? 0.2;
+        const critBonus = config.playerCritBonus ?? 2.0;
+        const isCrit = Math.random() < critChance;
+        const dmg = isCrit ? Math.round(baseAttack * (1 + critBonus)) : baseAttack;
+
         setBossAction('hit');
         setBossIsHit(true);
-        triggerShake('mild');
+        triggerShake(isCrit ? 'strong' : 'mild');
         sound.playHit(true);
-        setImpactEffect({ show: true, color: '#FF8C42' });
+        setImpactEffect({ show: true, color: isCrit ? '#FF1E44' : '#FF8C42', isCrit });
 
         const nextBossHP = Math.max(0, bossRef.current.currentHP - dmg);
         setCurrentBoss((prev) => ({ ...prev, currentHP: nextBossHP }));
         setTotalDamageDealt((prev) => prev + dmg);
+        if (isCrit) {
+          setCritCount((prev) => prev + 1);
+          setCritBanner({ show: true, damage: dmg });
+          setTimeout(() => {
+            setCritBanner(null);
+          }, 1600);
+        }
 
-        // 550-700ms: Red floating damage on BOSS
+        // 550-700ms: Floating damage on BOSS
         addFloatingDamage({
           target: 'boss',
           amount: dmg,
-          type: 'damage',
-          color: '#FF6B6B',
+          type: isCrit ? 'crit' : 'damage',
+          color: isCrit ? '#FF1E44' : '#FF6B6B',
+          isCrit: isCrit,
         });
 
         setTimeout(() => {
@@ -324,8 +340,8 @@ export const BattlePage: React.FC<BattlePageProps> = ({
           // The reveal dialog will be checked and presented to the player AFTER boss attacks!
           setTimeout(() => {
             executeBossTurn();
-          }, 350);
-        }, 350);
+          }, isCrit ? 750 : 350);
+        }, isCrit ? 550 : 350);
       }, 180);
     }, 200);
   };
@@ -492,8 +508,31 @@ export const BattlePage: React.FC<BattlePageProps> = ({
             {impactEffect && (
               <ImpactEffect
                 color={impactEffect.color}
+                isCrit={impactEffect.isCrit}
                 onComplete={() => setImpactEffect(null)}
               />
+            )}
+
+            {/* Critical Strike Center Announcement Banner */}
+            {critBanner && (
+              <motion.div
+                initial={{ scale: 0.4, y: 15, opacity: 0 }}
+                animate={{ scale: [0.4, 1.15, 1], y: 0, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0, y: -15 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[92%] max-w-xs text-center drop-shadow-2xl"
+              >
+                <div className="bg-gradient-to-r from-[#FF1E44] via-[#FF3B30] to-[#FF9500] text-white py-2.5 px-4 rounded-2xl border-3 border-white shadow-[0_8px_25px_rgba(255,30,68,0.55)] flex flex-col items-center">
+                  <div className="flex items-center gap-1.5 text-base sm:text-xl font-black tracking-wider text-yellow-200">
+                    <span>⚡</span>
+                    <span>致命暴击！</span>
+                    <span>💥</span>
+                  </div>
+                  <div className="text-xs sm:text-sm font-extrabold text-white/95 mt-0.5">
+                    攻击力暴增 · 造成 <span className="text-yellow-200 font-cartoon text-base sm:text-lg font-black">{critBanner.damage}</span> 伤害
+                  </div>
+                </div>
+              </motion.div>
             )}
 
             {/* Player Character (Bottom) */}
@@ -593,10 +632,33 @@ export const BattlePage: React.FC<BattlePageProps> = ({
               {impactEffect && (
                 <ImpactEffect
                   color={impactEffect.color}
+                  isCrit={impactEffect.isCrit}
                   onComplete={() => setImpactEffect(null)}
                 />
               )}
             </div>
+
+            {/* Critical Strike Center Announcement Banner (PC) */}
+            {critBanner && (
+              <motion.div
+                initial={{ scale: 0.4, y: 15, opacity: 0 }}
+                animate={{ scale: [0.4, 1.15, 1], y: 0, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0, y: -15 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-full max-w-sm text-center drop-shadow-2xl"
+              >
+                <div className="bg-gradient-to-r from-[#FF1E44] via-[#FF3B30] to-[#FF9500] text-white py-3 px-5 rounded-2xl border-4 border-white shadow-[0_8px_25px_rgba(255,30,68,0.55)] flex flex-col items-center">
+                  <div className="flex items-center gap-2 text-xl font-black tracking-wide text-yellow-200">
+                    <span>⚡</span>
+                    <span>致命暴击！</span>
+                    <span>💥</span>
+                  </div>
+                  <div className="text-sm font-extrabold text-white/95 mt-0.5">
+                    攻击力暴增 · 造成 <span className="text-yellow-200 font-cartoon text-xl font-black">{critBanner.damage}</span> 伤害
+                  </div>
+                </div>
+              </motion.div>
+            )}
 
             {/* Right: Boss */}
             <div className="relative flex flex-col items-center">

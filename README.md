@@ -84,8 +84,11 @@
   - **打斗中逃跑**：在战斗过程中点击“逃跑”，将判定为逃跑失败，并保留已进行的交锋数据与消耗明细；
   - 结算页面将统一展示逃跑落败专属警示徽章与失败结算。
 - **BOSS 反击逻辑**：玩家行动完成后（无论攻击还是补给），若 BOSS 未死亡，BOSS 会必定发起反击冲刺。
-- **伤害公式**：
-  - 玩家对 BOSS 伤害：$Damage_{Player} = Attack_{Player}$
+- **伤害公式与暴击机制**：
+  - **暴击判定**：玩家发起普通攻击时，按设定概率判定暴击（默认为 20%，可在高级对决规则中配置 0%~100%）；
+  - **未暴击**：$Damage_{Player} = Attack_{Player}$
+  - **触发暴击**：$Damage_{Player} = \text{round}(Attack_{Player} \times (1 + \text{CritBonus}))$，默认攻击力增加 200%（即造成 300% 伤害，支持在规则中自由调节加成）；
+  - **暴击特效**：暴击触发时呈现强力震屏、显目「💥 暴击!」炽热浮空飘字、专属重击受击效果，结算时统计暴击次数；
   - BOSS 对玩家伤害：$Damage_{BOSS} = \text{round}(Attack_{BOSS} \times (1 + \Delta))$，其中 $\Delta \in [-\text{fluctuation}, +\text{fluctuation}]$
 - **受击色彩规范**：
   - BOSS 受击：红色飘字（`-XX`）与暖红震屏；

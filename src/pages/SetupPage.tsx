@@ -14,6 +14,7 @@ import {
   RotateCcw,
   Plus,
   Minus,
+  Zap,
 } from 'lucide-react';
 import { sound } from '../sound';
 
@@ -407,7 +408,10 @@ export const SetupPage: React.FC<SetupPageProps> = ({
           onClick={() => setShowAdvanced(!showAdvanced)}
           className="w-full flex items-center justify-between text-sm sm:text-base font-extrabold text-[#8A7A6D] hover:text-[#4A3323] transition-colors py-1 cursor-pointer"
         >
-          <span>高级对决规则 (BOSS浮动 / 半血揭示阈值)</span>
+          <div className="flex items-center gap-1.5">
+            <Zap className="w-4 h-4 text-[#FFB300] fill-[#FFB300]" />
+            <span>高级对决规则 (暴击几率 / 暴击增伤 / 浮动规则)</span>
+          </div>
           {showAdvanced ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
 
@@ -417,8 +421,172 @@ export const SetupPage: React.FC<SetupPageProps> = ({
             animate={{ opacity: 1, height: 'auto' }}
             className="mt-3 space-y-4 bg-[#F9F2E7] p-3.5 rounded-xl border border-[#EEDCC4]"
           >
-            {/* BOSS Damage Fluctuation */}
-            <div>
+            {/* 1. Player Critical Strike Chance */}
+            <div className="bg-white/80 p-3 rounded-xl border border-[#EEDCC4]">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs sm:text-sm font-extrabold text-[#4A3323] flex items-center gap-1.5">
+                  <span className="text-base">💥</span>
+                  <span>玩家暴击几率</span>
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateField(
+                        'playerCritChance',
+                        Math.max(0, Number(((config.playerCritChance ?? 0.2) - 0.05).toFixed(2)))
+                      )
+                    }
+                    className="w-6 h-6 rounded bg-[#EADBC8] text-[#4A3323] font-black text-xs flex items-center justify-center hover:bg-[#DECABE] cursor-pointer"
+                  >
+                    -
+                  </button>
+                  <span className="min-w-[52px] text-center font-black text-sm text-[#FF2D55] bg-[#FFEAEF] px-1.5 py-0.5 rounded-md border border-[#FFD0DB]">
+                    {Math.round((config.playerCritChance ?? 0.2) * 100)}%
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateField(
+                        'playerCritChance',
+                        Math.min(1.0, Number(((config.playerCritChance ?? 0.2) + 0.05).toFixed(2)))
+                      )
+                    }
+                    className="w-6 h-6 rounded bg-[#EADBC8] text-[#4A3323] font-black text-xs flex items-center justify-center hover:bg-[#DECABE] cursor-pointer"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <input
+                type="range"
+                min="0"
+                max="1.0"
+                step="0.05"
+                value={config.playerCritChance ?? 0.2}
+                onChange={(e) => updateField('playerCritChance', Number(e.target.value))}
+                className="w-full h-2 bg-[#EADBC8] rounded-full appearance-none accent-[#FF2D55] cursor-pointer"
+              />
+
+              {/* Quick presets for crit chance */}
+              <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-[#F2ECE4]">
+                <span className="text-[11px] text-[#8A7A6D] font-bold">快捷预设:</span>
+                <div className="flex gap-1">
+                  {[
+                    { label: '0% 关闭', value: 0 },
+                    { label: '20% 标准', value: 0.2 },
+                    { label: '50% 强力', value: 0.5 },
+                    { label: '100% 必爆', value: 1.0 },
+                  ].map((preset) => (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() => updateField('playerCritChance', preset.value)}
+                      className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
+                        Math.round((config.playerCritChance ?? 0.2) * 100) === Math.round(preset.value * 100)
+                          ? 'bg-[#FF2D55] text-white shadow-xs'
+                          : 'bg-[#EADBC8]/70 text-[#4A3323] hover:bg-[#EADBC8]'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Critical Strike Attack Bonus (+200% default) */}
+            <div className="bg-white/80 p-3 rounded-xl border border-[#EEDCC4]">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs sm:text-sm font-extrabold text-[#4A3323] flex items-center gap-1.5">
+                  <span className="text-base">⚡</span>
+                  <span>暴击攻击力增加</span>
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateField(
+                        'playerCritBonus',
+                        Math.max(0.2, Number(((config.playerCritBonus ?? 2.0) - 0.25).toFixed(2)))
+                      )
+                    }
+                    className="w-6 h-6 rounded bg-[#EADBC8] text-[#4A3323] font-black text-xs flex items-center justify-center hover:bg-[#DECABE] cursor-pointer"
+                  >
+                    -
+                  </button>
+                  <span className="min-w-[64px] text-center font-black text-sm text-[#FF8C42] bg-[#FFF2E6] px-1.5 py-0.5 rounded-md border border-[#FFD9B3]">
+                    +{Math.round((config.playerCritBonus ?? 2.0) * 100)}%
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateField(
+                        'playerCritBonus',
+                        Math.min(5.0, Number(((config.playerCritBonus ?? 2.0) + 0.25).toFixed(2)))
+                      )
+                    }
+                    className="w-6 h-6 rounded bg-[#EADBC8] text-[#4A3323] font-black text-xs flex items-center justify-center hover:bg-[#DECABE] cursor-pointer"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <input
+                type="range"
+                min="0.5"
+                max="5.0"
+                step="0.25"
+                value={config.playerCritBonus ?? 2.0}
+                onChange={(e) => updateField('playerCritBonus', Number(e.target.value))}
+                className="w-full h-2 bg-[#EADBC8] rounded-full appearance-none accent-[#FF8C42] cursor-pointer"
+              />
+
+              {/* Dynamic Damage Calculation Preview */}
+              <div className="mt-2 bg-[#FFF9EE] px-2.5 py-1.5 rounded-lg border border-[#FFE7BA] text-xs font-bold text-[#8A7A6D] flex items-center justify-between">
+                <span>暴击输出预览:</span>
+                <span className="font-extrabold text-[#4A3323]">
+                  基础 {config.playerAttack} ➔{' '}
+                  <span className="text-[#FF2D55] font-black">
+                    {Math.round(config.playerAttack * (1 + (config.playerCritBonus ?? 2.0)))}
+                  </span>{' '}
+                  <span className="text-[11px] text-[#8A7A6D]">
+                    ({Math.round((1 + (config.playerCritBonus ?? 2.0)) * 100)}% 伤害)
+                  </span>
+                </span>
+              </div>
+
+              {/* Quick presets for crit bonus */}
+              <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-[#F2ECE4]">
+                <span className="text-[11px] text-[#8A7A6D] font-bold">加成预设:</span>
+                <div className="flex gap-1">
+                  {[
+                    { label: '+100%', value: 1.0 },
+                    { label: '+200% 默认', value: 2.0 },
+                    { label: '+300%', value: 3.0 },
+                    { label: '+500% 毁灭', value: 5.0 },
+                  ].map((preset) => (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() => updateField('playerCritBonus', preset.value)}
+                      className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
+                        Math.round((config.playerCritBonus ?? 2.0) * 100) === Math.round(preset.value * 100)
+                          ? 'bg-[#FF8C42] text-white shadow-xs'
+                          : 'bg-[#EADBC8]/70 text-[#4A3323] hover:bg-[#EADBC8]'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 3. BOSS Damage Fluctuation */}
+            <div className="bg-white/80 p-3 rounded-xl border border-[#EEDCC4]">
               <div className="flex justify-between text-xs font-bold text-[#4A3323] mb-1">
                 <span>BOSS 攻击浮动区间</span>
                 <span className="font-extrabold text-[#FF8C42]">
@@ -436,8 +604,8 @@ export const SetupPage: React.FC<SetupPageProps> = ({
               />
             </div>
 
-            {/* Half HP Threshold */}
-            <div>
+            {/* 4. Half HP Threshold */}
+            <div className="bg-white/80 p-3 rounded-xl border border-[#EEDCC4]">
               <div className="flex justify-between text-xs font-bold text-[#4A3323] mb-1">
                 <span>半血揭示触发阈值</span>
                 <span className="font-extrabold text-[#E8432E]">
